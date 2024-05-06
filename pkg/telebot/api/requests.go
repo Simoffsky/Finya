@@ -5,7 +5,7 @@ import (
 )
 
 // /getUpdates
-type UpdateResponse struct {
+type GetUpdatesResponse struct {
 	Ok     bool            `json:"ok"`
 	Result []models.Update `json:"result"`
 }

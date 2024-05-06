@@ -4,7 +4,6 @@ import (
 	"finance-bot/internal/config"
 	"finance-bot/pkg/log"
 	"finance-bot/pkg/telebot"
-	"fmt"
 )
 
 func main() {
@@ -16,10 +15,8 @@ func main() {
 
 	bot := telebot.NewTelebot(config.BotToken, logger)
 
-	user, err := bot.GetMe()
+	err := bot.LongPooling()
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Error("failed to long pool: " + err.Error())
 	}
-	fmt.Println(user)
-
 }

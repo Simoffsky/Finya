@@ -50,10 +50,10 @@ func NewDefaultLogger(level LoggerLevel) *defaultLogger {
 	}
 }
 
-func (l defaultLogger) WithPrefix(prefix string) *defaultLogger {
+func (l *defaultLogger) WithPrefix(prefix string) *defaultLogger {
 	return &defaultLogger{
 		level:  l.level,
-		prefix: prefix,
+		prefix: l.prefix + prefix,
 	}
 }
 
