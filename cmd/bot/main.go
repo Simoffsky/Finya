@@ -1,22 +1,17 @@
 package main
 
 import (
+	"finance-bot/internal/bot"
 	"finance-bot/internal/config"
-	"finance-bot/pkg/log"
-	"finance-bot/pkg/telebot"
+	"fmt"
 )
 
 func main() {
 	config := config.NewEnvConfig()
 
-	logger := log.NewDefaultLogger(
-		log.LevelFromString(config.LogLevel),
-	).WithTimePrefix()
-
-	bot := telebot.NewTelebot(config.BotToken, logger)
-
-	err := bot.LongPooling()
-	if err != nil {
-		logger.Error("failed to long pool: " + err.Error())
+	b := bot.NewBot(config)
+	if err := b.Start(); err != nil {
+		fmt.Println(err)
 	}
+
 }

@@ -27,6 +27,7 @@ func (t *Telebot) GetMe() (*models.User, error) {
 
 func (t *Telebot) LongPooling() error {
 	for {
+
 		updates, err := t.apiClient.GetUpdates(t.offset)
 		if err != nil {
 			return err
@@ -35,5 +36,6 @@ func (t *Telebot) LongPooling() error {
 			t.offset = update.UpdateID + 1
 			t.logger.Debug("new update: \n" + "\tID: " + fmt.Sprint(update.UpdateID) + "\n" + "\tUser: " + update.Message.From.Username + "\n" + "\tMessage: " + update.Message.Text)
 		}
+
 	}
 }

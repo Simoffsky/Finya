@@ -46,9 +46,12 @@ func (t *TelegramBotAPI) GetMe() (*models.User, error) {
 
 func (t *TelegramBotAPI) GetUpdates(offset int) ([]models.Update, error) {
 	url := telegramUrl + t.Token + "/getUpdates?timeout=60&offset=" + fmt.Sprint(offset)
+
 	t.logger.Debug("http: request to telegram api with url: " + url)
+
 	resp, err := http.DefaultClient.Get(url)
 	if err != nil {
+
 		t.logger.Error("http: failed to make http request with url: " + url)
 		return nil, err
 	}
@@ -61,5 +64,6 @@ func (t *TelegramBotAPI) GetUpdates(offset int) ([]models.Update, error) {
 	if !body.Ok {
 		return nil, fmt.Errorf("http: failed to get updates")
 	}
+
 	return body.Result, nil
 }
