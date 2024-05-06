@@ -2,29 +2,10 @@ package main
 
 import (
 	"finance-bot/internal/config"
-	"finance-bot/internal/log"
+	"finance-bot/pkg/log"
+	"finance-bot/pkg/telebot"
+	"fmt"
 )
-
-type Default interface {
-	Test()
-	Print()
-}
-
-type DefaultImpl struct {
-	a int
-}
-
-func (d *DefaultImpl) Test() {
-	d.a = d.a + 1
-}
-
-func (d DefaultImpl) Print() {
-	println(d.a)
-}
-
-func getDefault() Default {
-	return &DefaultImpl{a: 1}
-}
 
 func main() {
 	config := config.NewEnvConfig()
@@ -32,5 +13,13 @@ func main() {
 	logger := log.NewDefaultLogger(
 		log.LevelFromString(config.LogLevel),
 	).WithTimePrefix()
+
+	bot := telebot.NewTelebot(config.BotToken, logger)
+
+	user, err := bot.GetMe()
+	if err != nil {
+		logger.Error(err.Error())
+	}
+	fmt.Println(user)
 
 }
