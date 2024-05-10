@@ -8,24 +8,22 @@ import (
 	"net/http"
 )
 
-const (
-	telegramUrl = "https://api.telegram.org/bot"
-)
-
 type TelegramBotAPI struct {
-	Token  string
-	logger log.Logger
+	Token       string
+	telegramURL string
+	logger      log.Logger
 }
 
-func NewTelegramBotAPI(token string, logger log.Logger) *TelegramBotAPI {
+func NewTelegramBotAPI(token, telegramURL string, logger log.Logger) *TelegramBotAPI {
 	return &TelegramBotAPI{
-		Token:  token,
-		logger: logger,
+		Token:       token,
+		logger:      logger,
+		telegramURL: telegramURL,
 	}
 }
 
 func (t *TelegramBotAPI) GetMe() (*models.User, error) {
-	url := telegramUrl + t.Token + "/getMe"
+	url := t.telegramURL + t.Token + "/getMe"
 	t.logger.Debug("http: request to telegram api with url: " + url)
 	resp, err := http.DefaultClient.Get(url)
 	if err != nil {
@@ -44,32 +42,33 @@ func (t *TelegramBotAPI) GetMe() (*models.User, error) {
 	return body.User, nil
 }
 
-func (t *TelegramBotAPI) SendMessageText(chatID int, text string) error {
-	url := telegramUrl + t.Token + "/sendMessage?chat_id=" + fmt.Sprint(chatID) + "&text=" + text
+func (t *TelegramBotAPI) SendMessageText(chatID int, text string) (models.Message, error) {
+	messageUrl := t.telegramURL + t.Token + "/sendMessage?chat_id=" + fmt.Sprint(chatID) + "&text=" + text
 
-	t.logger.Debug("http: request to telegram api with url: " + url)
+	t.logger.Debug("http: request to telegram api with url: " + messageUrl)
 
-	resp, err := http.DefaultClient.Get(url)
+	resp, err := http.DefaultClient.Get(messageUrl)
 	if err != nil {
-		t.logger.Error("http: failed to make http request with url: " + url)
-		return err
+		t.logger.Error("http: failed to make http request with url: " + messageUrl)
+		return models.Message{}, err
 	}
 	defer resp.Body.Close()
 
 	body := SendMessageResponse{}
+
 	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
-		return err
+		return models.Message{}, err
 	}
 	if !body.Ok {
-		return fmt.Errorf("http: failed to send message")
+		return models.Message{}, fmt.Errorf("http: failed to send message")
 	}
 
 	t.logger.Debug("message sent:\n" + formatDebugMessageModel(body.Result))
-	return nil
+	return body.Result, nil
 }
 
 func (t *TelegramBotAPI) GetUpdates(offset int) ([]models.Update, error) {
-	url := telegramUrl + t.Token + "/getUpdates?timeout=60&offset=" + fmt.Sprint(offset)
+	url := t.telegramURL + t.Token + "/getUpdates?timeout=60&offset=" + fmt.Sprint(offset)
 
 	t.logger.Debug("http: request to telegram api with url: " + url)
 

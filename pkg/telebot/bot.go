@@ -71,7 +71,7 @@ func (t *Telebot) handleCommand(message models.Message) {
 
 func NewTelebot(token string, logger log.Logger) *Telebot {
 	return &Telebot{
-		apiClient: api.NewTelegramBotAPI(token, logger),
+		apiClient: api.NewTelegramBotAPI(token, "https://api.telegram.org/bot", logger),
 		logger:    logger,
 	}
 }
@@ -81,7 +81,7 @@ func (t *Telebot) GetMe() (*models.User, error) {
 	return t.apiClient.GetMe()
 }
 
-func (t *Telebot) SendMessage(chatID int, text string) error {
+func (t *Telebot) SendMessage(chatID int, text string) (models.Message, error) {
 	t.logger.Debug("sending message to chat with ID: " + fmt.Sprint(chatID))
 	return t.apiClient.SendMessageText(chatID, text)
 }

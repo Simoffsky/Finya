@@ -36,14 +36,14 @@ func (bot *Bot) Start() error {
 	}
 
 	bot.telebot.RegisterCommand("/start", func(msg models.Message) {
-		err := bot.telebot.SendMessage(msg.Chat.ID, "Hello! I'm a finance bot. I can help you with finance stuff.")
+		_, err := bot.telebot.SendMessage(msg.Chat.ID, "Hello! I'm a finance bot. I can help you with finance stuff.")
 		if err != nil {
 			bot.logger.Error("failed to send message: " + err.Error())
 		}
 	})
 
 	bot.telebot.RegisterCommand("/echo", func(msg models.Message) {
-		err := bot.telebot.SendMessage(msg.Chat.ID, msg.Text[5:])
+		_, err := bot.telebot.SendMessage(msg.Chat.ID, msg.Text[5:])
 		if err != nil {
 			bot.logger.Error("failed to send message: " + err.Error())
 		}

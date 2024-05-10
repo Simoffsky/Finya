@@ -2,6 +2,8 @@ package log
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetLoggerLevels(t *testing.T) {
@@ -18,9 +20,7 @@ func TestSetLoggerLevels(t *testing.T) {
 	for _, testCase := range table {
 		t.Run(testCase.expect, func(t *testing.T) {
 			logger := NewDefaultLogger(testCase.level)
-			if logger.level != testCase.level {
-				t.Errorf("expected %v, got %v", testCase.expect, logger.level)
-			}
+			assert.Equal(t, logger.level, testCase.level)
 		})
 	}
 }
