@@ -5,7 +5,6 @@ import (
 	"finance-bot/pkg/log"
 	"finance-bot/pkg/telebot"
 	"finance-bot/pkg/telebot/models"
-	"fmt"
 	"os"
 	"os/signal"
 )
@@ -60,7 +59,6 @@ func (bot *Bot) Start() error {
 		if err != nil {
 			bot.logger.Error("failed to long pool: " + err.Error())
 		}
-		fmt.Println("ended")
 		errCh <- err
 
 	}()
