@@ -38,7 +38,8 @@ func TestGetMe(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-				rw.Write([]byte(tc.serverResponse))
+				_, err := rw.Write([]byte(tc.serverResponse))
+				assert.NoError(t, err)
 			}))
 
 			defer server.Close()
@@ -113,7 +114,8 @@ func TestSendMessageText(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-				rw.Write([]byte(tc.serverResponse))
+				_, err := rw.Write([]byte(tc.serverResponse))
+				assert.NoError(t, err)
 			}))
 
 			defer server.Close()
