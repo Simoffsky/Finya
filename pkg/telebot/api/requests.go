@@ -10,6 +10,12 @@ type GetUpdatesResponse struct {
 	Result []models.Update `json:"result"`
 }
 
+// /sendMessage
+type SendMessageResponse struct {
+	Ok     bool           `json:"ok"`
+	Result models.Message `json:"result"`
+}
+
 // /getMe
 type GetMeResponse struct {
 	Ok   bool         `json:"ok"`

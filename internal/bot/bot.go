@@ -4,6 +4,7 @@ import (
 	"finance-bot/internal/config"
 	"finance-bot/pkg/log"
 	"finance-bot/pkg/telebot"
+	"finance-bot/pkg/telebot/models"
 	"fmt"
 	"os"
 	"os/signal"
@@ -34,6 +35,14 @@ func (bot *Bot) Start() error {
 	if err := bot.configure(); err != nil {
 		return err
 	}
+
+	bot.telebot.RegisterCommand("/start", func(msg models.Message) {
+		bot.telebot.SendMessage(msg.Chat.ID, "Hello! I'm a finance bot. I can help you with finance stuff.")
+	})
+
+	bot.telebot.RegisterCommand("/echo", func(msg models.Message) {
+		bot.telebot.SendMessage(msg.Chat.ID, msg.Text[5:])
+	})
 
 	errCh := make(chan error, 1)
 	sigint := make(chan os.Signal, 1)

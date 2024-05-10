@@ -1,7 +1,9 @@
-.PHONY: run
+.PHONY: run, build
 
-run:
-	go run ./cmd/bot/main.go
+run: build
+	./bin/bot
 
+build:
+	go build -o ./bin/bot cmd/bot/main.go 
 test:
 	go test ./... -race

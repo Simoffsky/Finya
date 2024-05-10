@@ -44,6 +44,30 @@ func (t *TelegramBotAPI) GetMe() (*models.User, error) {
 	return body.User, nil
 }
 
+func (t *TelegramBotAPI) SendMessageText(chatID int, text string) error {
+	url := telegramUrl + t.Token + "/sendMessage?chat_id=" + fmt.Sprint(chatID) + "&text=" + text
+
+	t.logger.Debug("http: request to telegram api with url: " + url)
+
+	resp, err := http.DefaultClient.Get(url)
+	if err != nil {
+		t.logger.Error("http: failed to make http request with url: " + url)
+		return err
+	}
+	defer resp.Body.Close()
+
+	body := SendMessageResponse{}
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		return err
+	}
+	if !body.Ok {
+		return fmt.Errorf("http: failed to send message")
+	}
+
+	t.logger.Debug("message sent:\n" + formatDebugMessageModel(body.Result))
+	return nil
+}
+
 func (t *TelegramBotAPI) GetUpdates(offset int) ([]models.Update, error) {
 	url := telegramUrl + t.Token + "/getUpdates?timeout=60&offset=" + fmt.Sprint(offset)
 
@@ -66,4 +90,15 @@ func (t *TelegramBotAPI) GetUpdates(offset int) ([]models.Update, error) {
 	}
 
 	return body.Result, nil
+}
+
+func formatDebugMessageModel(msg models.Message) string {
+	var name string
+	if msg.From.Username == "" {
+		name = msg.Chat.Title
+	} else {
+		name = msg.Chat.Username
+	}
+
+	return fmt.Sprintf("\tID: %d\n\tDate: %d\n\tChat: %s\n\tText: %s", msg.MessageID, msg.Date, name, msg.Text)
 }
