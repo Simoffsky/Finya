@@ -1,6 +1,9 @@
 package log
 
+import "github.com/stretchr/testify/mock"
+
 type MockLogger struct {
+	mock.Mock
 }
 
 func (m *MockLogger) Debug(string) {

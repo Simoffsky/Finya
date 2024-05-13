@@ -81,7 +81,7 @@ func (t *TelegramBotAPI) GetUpdates(offset int) ([]models.Update, error) {
 	defer resp.Body.Close()
 
 	body := GetUpdatesResponse{}
-	
+
 	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
 		return nil, err
 	}

@@ -20,10 +20,10 @@ type Message struct {
 type MessageEntityType string
 
 const (
-	MessageEntityTypeMention    MessageEntityType = "mention"
-	MessageEntityTypeHashtag    MessageEntityType = "hashtag"
-	MessageEntityTypeCashtag    MessageEntityType = "cashtag"
-	MessageEntityTypeBotCommand MessageEntityType = "bot_command"
+	EntityTypeMention    MessageEntityType = "mention"
+	EntityTypeHashtag    MessageEntityType = "hashtag"
+	EntityTypeCashtag    MessageEntityType = "cashtag"
+	EntityTypeBotCommand MessageEntityType = "bot_command"
 )
 
 type MessageEntity struct {
