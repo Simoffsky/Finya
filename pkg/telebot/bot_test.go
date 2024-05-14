@@ -4,6 +4,7 @@ import (
 	"finance-bot/pkg/log"
 	"finance-bot/pkg/telebot/api"
 	"finance-bot/pkg/telebot/models"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -28,9 +29,7 @@ func TestHandleUpdates(t *testing.T) {
 
 	tbot.HandleUpdates(updates)
 
-	if tbot.offset != 0 {
-		t.Errorf("Expected offset to be 0, but got %v", tbot.offset)
-	}
+	assert.Equal(t, 0, tbot.offset)
 
 	updates = append(updates,
 		models.Update{
@@ -51,17 +50,30 @@ func TestHandleUpdates(t *testing.T) {
 
 	tbot.HandleUpdates(updates)
 
-	if tbot.offset != 3 {
-		t.Errorf("Expected offset to be 3, but got %v", tbot.offset)
-	}
+	assert.Equal(t, 3, tbot.offset)
+
+	updates = append(updates, models.Update{
+		UpdateID: 3,
+		Message:  nil,
+	})
+
+	wg := sync.WaitGroup{}
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := <-tbot.Errors()
+		assert.EqualError(t, err.Error, models.ErrUpdateEmptyMessage.Error())
+	}()
+
+	tbot.HandleUpdates(updates) // assert error in channel
+	wg.Wait()
+	assert.Equal(t, 4, tbot.offset)
 
 	updates = []models.Update{}
 
 	tbot.HandleUpdates(updates)
-
-	if tbot.offset != 3 {
-		t.Errorf("Expected offset to remain 3, but got %v", tbot.offset)
-	}
+	assert.Equal(t, 4, tbot.offset)
 
 }
 
