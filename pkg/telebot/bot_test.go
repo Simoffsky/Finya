@@ -27,7 +27,7 @@ func TestHandleUpdates(t *testing.T) {
 
 	updates := []models.Update{}
 
-	tbot.HandleUpdates(updates)
+	tbot.handleUpdates(updates)
 
 	assert.Equal(t, 0, tbot.offset)
 
@@ -48,7 +48,7 @@ func TestHandleUpdates(t *testing.T) {
 		},
 	)
 
-	tbot.HandleUpdates(updates)
+	tbot.handleUpdates(updates)
 
 	assert.Equal(t, 3, tbot.offset)
 
@@ -66,13 +66,13 @@ func TestHandleUpdates(t *testing.T) {
 		assert.EqualError(t, err.Error, models.ErrUpdateEmptyMessage.Error())
 	}()
 
-	tbot.HandleUpdates(updates) // assert error in channel
+	tbot.handleUpdates(updates) // assert error in channel
 	wg.Wait()
 	assert.Equal(t, 4, tbot.offset)
 
 	updates = []models.Update{}
 
-	tbot.HandleUpdates(updates)
+	tbot.handleUpdates(updates)
 	assert.Equal(t, 4, tbot.offset)
 
 }

@@ -43,6 +43,13 @@ func (t *Telebot) Errors() <-chan FailedUpdate {
 	return t.errch
 }
 
+// Closing the channels, stops the bot
+// TODO: Tests?
+func (t *Telebot) Close() error {
+	close(t.errch)
+	return nil
+}
+
 // RegisterCommand registers a command with a handler
 // will overwrite the handler if the command already exists
 func (t *Telebot) RegisterCommand(command string, handler CommandHandler) {
@@ -60,10 +67,10 @@ func (t *Telebot) GetOffset() int {
 	return t.offset
 }
 
-// HandleUpdates handles updates from the Telegram API
+// handleUpdates handles updates from the Telegram API
 // and calls the appropriate handler for each update concurrently
-// errors are sent to the error channel(errch)
-func (t *Telebot) HandleUpdates(updates []models.Update) {
+// errors are sent to the error channel - t.Errors()
+func (t *Telebot) handleUpdates(updates []models.Update) {
 	if len(updates) == 0 {
 		return
 	}
@@ -126,6 +133,7 @@ func (t *Telebot) handleCommand(message models.Message) error {
 	return handler(message)
 }
 
+// returns *models.User that provides information about the bot
 func (t *Telebot) GetMe() (*models.User, error) {
 	t.logger.Debug("getting information about the bot")
 	return t.apiClient.GetMe()
@@ -149,7 +157,7 @@ func (t *Telebot) LongPooling(ctx context.Context) error {
 				return err
 			}
 
-			t.HandleUpdates(updates)
+			t.handleUpdates(updates)
 		}
 	}
 }
